@@ -1,0 +1,7 @@
+/Users/mikhailkatsuro/Downloads/Новая папка/NSMP/src/CMakeFiles/server.dir
+/Users/mikhailkatsuro/Downloads/Новая папка/NSMP/src/CMakeFiles/client.dir
+/Users/mikhailkatsuro/Downloads/Новая папка/NSMP/src/CMakeFiles/run_server.dir
+/Users/mikhailkatsuro/Downloads/Новая папка/NSMP/src/CMakeFiles/run_client.dir
+/Users/mikhailkatsuro/Downloads/Новая папка/NSMP/src/CMakeFiles/run_all.dir
+/Users/mikhailkatsuro/Downloads/Новая папка/NSMP/src/CMakeFiles/edit_cache.dir
+/Users/mikhailkatsuro/Downloads/Новая папка/NSMP/src/CMakeFiles/rebuild_cache.dir
