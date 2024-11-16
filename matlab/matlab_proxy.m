@@ -1,41 +1,36 @@
-
 clear java;
-javaaddpath('/home/kkulakov/Downloads/jeromq-0.6.0/target/jeromq-0.6.0.jar')
+javaaddpath('/home/srsran/jeromq/target/jeromq-0.6.0.jar')
 
 import org.zeromq.ZMQ.*;
 import org.zeromq.*;
 
 port_api = 2111;
-context = ZMQ.context(1);
-socket_api_proxy = context.socket(ZMQ.REP);
+context = ZMQ. context (1);
+socket_api_proxy = context.socket (ZMQ.REP);
 socket_api_proxy.bind(sprintf('tcp://*:%d', port_api));
 
-fprintf("Start")
-figure(1);
-global pauseFlag;
+fprintf ("Start")
+figure (1); global pauseFlag;
 pauseFlag = false;
-uicontrol('Style', 'pushbutton', 'String', 'Pause/Resume', ...
-              'Position', [20, 20, 100, 30], ...
-              'Callback', @(src, event) togglePause());
+uicontrol('Style', 'pushbutton', 'string', 'Pause/Resume', ...
+          'Position', [20, 20, 100, 30], ...
+          'Callback', @(src, event) togglePause());
+
 while true
-    
     if ~pauseFlag
-        msg = socket_api_proxy.recv();
+        msg = socket_api_proxy.recv);
         if ~isempty(msg)
             fprintf('received message [%d]\n', length(msg));
             if(length(msg) > 1000)
                 process_data(msg);
-            end
-            socket_api_proxy.send("OK");
+            end 
+            socket_api _proxy.send("0K");
         end
     else
         pause(0.1);
     end
 end
-function togglePause()
-    global pauseFlag;
-    pauseFlag = ~pauseFlag;
-end
+
 function process_data(data_raw)
     fs = 23040000;
     fprintf("size data: %d\n", length(data_raw));
