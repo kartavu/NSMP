@@ -1,5 +1,5 @@
 clear java;
-javaaddpath('/home/srsran/jeromq/target/jeromq-0.6.0.jar')
+javaaddpath('/home/mikhailkatsuro/Download/jeromq/target/jeromq-0.6.0.jar')
 
 import org.zeromq.ZMQ.*;
 import org.zeromq.*;
