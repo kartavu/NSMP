@@ -17,18 +17,32 @@ pauseFlag = false;
 uicontrol('Style', 'pushbutton', 'String', 'Pause/Resume', ...
               'Position', [20, 20, 100, 30], ...
               'Callback', @(src, event) togglePause());
+
+global iter_set_dist;
+
+iter_set_dist = 0;
+
+global index_dl;
+index_dl = 1;
+global dist_list;
+% dist_list = [10, 50, 100, 500, 1000, 4000];
+dist_list = [10, 50, 100, 300, 500, 600, 1000];
+
+
+
 while true
     
     if ~pauseFlag
         msg = socket_api_proxy.recv();
         if ~isempty(msg)
-            fprintf('received message [%d]\n', length(msg));
+            % fprintf('received message [%d]\n', length(msg));
             if(length(msg) > 1000)
                 % process_data(msg);
                 % transmission_channel_model(msg);
                 msg = simulaion(msg);
                 msg = convert_to_byte(msg);
-                fprintf("send to proxe: %d\n", length(msg));
+                % fprintf("send to proxe: %d\n", length(msg));
+                
                 % msg = complexToBytes(msg);
 
             end
@@ -49,10 +63,12 @@ end
 
 function out_data = convert_to_byte(complex_array)
     single_array = single(complex_array);
-    real_parts = real(single_array);
-    imaginary_parts = imag(single_array);
-    combined_array = reshape([real_parts; imaginary_parts], 1, []);
-    out_data = typecast(combined_array, 'uint8');
+    realPart = real(single_array);
+    imaginaryPart = imag(single_array);
+    floatArray = zeros(1, 2 * length(single_array));
+    floatArray(1:2:end) = realPart;    
+    floatArray(2:2:end) = imaginaryPart; 
+    out_data = typecast(single(floatArray), 'uint8');
     
 end
 
@@ -73,19 +89,42 @@ function out_data = CostHata(data, h_enb, h_ue, d)
     out_data = data - L;
 end
 
+
 function out_data = simulaion(data_raw)
+    
 
-
+    global iter_set_dist;
+    global index_dl;
+    global dist_list;
+        
     data_slice = data_raw;
-    floatArray = typecast(uint8(data_slice), 'single');
+    floatArray = typecast(data_slice, 'single');
+    
     data = complex(floatArray(1:2:end), floatArray(2:2:end));
-    fprintf("size data = %d\n", length(data));
+    % fprintf("size data = %d\n", length(data));
     CON = 2;
     
     pos_ENB = [100, 200, 50];
     pos_UE = [200, 200, 1.5];
     
-    distance = 4;
+    
+    iter_set_dist = iter_set_dist + 1;
+    distance = 1;
+    if iter_set_dist > 1000
+
+
+        distance = dist_list(index_dl);
+        fprintf("new distance: %d, index: %d\n", distance, index_dl);
+        index_dl = index_dl + 1;
+
+        if index_dl > length(dist_list)
+            index_dl = 1;
+            
+        end
+        iter_set_dist = 0;
+    end
+
+    %distance = 400;
 
 
     if(CON == 1)
@@ -94,10 +133,24 @@ function out_data = simulaion(data_raw)
 
     %fprintf("dist = %f\n", distance);
 
-    % data_cost = CostHata(data, pos_ENB(3), pos_UE(3), distance);
-    % out_data = data_cost;
+
+    mu = 0; % Среднее значение
+    sigma = distance; % Стандартное отклонение
+    n = length(data); % Количество точек
     
-    out_data = data;
+    % Генерация нормально распределённого шума
+    noise = mu + sigma * randn(n, 1);
+    
+    % Ограничение шума до ±100
+    noise = max(min(noise, 100), -100);
+    noise = noise + noise * 1i;
+
+    % data_cost = CostHata(data, pos_ENB(3), pos_UE(3), distance);
+    data_cost = data / (distance / 10) + noise;
+
+    out_data = data_cost;
+    
+    % out_data = data;
 
 
     %fprintf("data_cost = %f\n", data_cost);
@@ -210,3 +263,23 @@ function out_data = transmission_channel_model0(data, c, Nb, f0, Ts, D1, Dn, N0)
     end
     out_data = Smpy;% + n;
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
