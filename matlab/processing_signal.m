@@ -263,23 +263,3 @@ function out_data = transmission_channel_model0(data, c, Nb, f0, Ts, D1, Dn, N0)
     end
     out_data = Smpy;% + n;
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
